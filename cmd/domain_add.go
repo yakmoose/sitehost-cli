@@ -20,11 +20,13 @@ import (
 var domainAddCmd = &cobra.Command{
 	Use:   "add",
 	Short: "Add a new domain name",
-	Args:  cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client := domains.DomainClient(viper.GetString("apiKey"), viper.GetString("clientId"))
 		ctx := context.Background()
-		domain, err := client.Get(ctx, domain.GetRequest{DomainName: args[0]})
+
+		domainName := cmd.Flag("domain").Value.String()
+
+		domain, err := client.Get(ctx, domain.GetRequest{DomainName: domainName})
 		if err != nil {
 			return err
 		}
@@ -33,7 +35,7 @@ var domainAddCmd = &cobra.Command{
 			return errors.New("Domain already exists")
 		}
 
-		domain, err = client.Create(ctx, &models.Domain{Name: args[0], TemplateID: "0"})
+		domain, err = client.Create(ctx, &models.Domain{Name: domainName, TemplateID: "0"})
 		if err != nil {
 			return err
 		}
@@ -47,14 +49,7 @@ var domainAddCmd = &cobra.Command{
 
 func init() {
 	domainCmd.AddCommand(domainAddCmd)
+	domainAddCmd.Flags().StringP("domain", "d", "", "The domain name to use")
+	domainAddCmd.MarkFlagRequired("domain")
 
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// domainAddCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// domainAddCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
