@@ -15,6 +15,6 @@ var cloudCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(cloudCmd)
-	cloudCmd.PersistentFlags().StringP("server", "s", "", "The server name to fetch the stack list from")
+	cloudCmd.PersistentFlags().StringP("server", "S", "", "The server name to fetch the stack list from")
 	cloudCmd.MarkPersistentFlagRequired("server")
 }
