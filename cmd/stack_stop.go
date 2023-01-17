@@ -5,7 +5,9 @@ package cmd
 
 import (
 	"context"
+	"github.com/sitehostnz/gosh/pkg/api"
 	"github.com/sitehostnz/gosh/pkg/api/cloud/stack"
+	"github.com/sitehostnz/terraform-provider-sitehost/sitehost/helper"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"shcli/pkg/cloud/stacks"
@@ -16,15 +18,17 @@ var stopStackCmd = &cobra.Command{
 	Use:   "stop",
 	Short: "Stops a running stack",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		client := stacks.StackClient(viper.GetString("apiKey"), viper.GetString("clientId"))
+		apiKey := viper.GetString("apiKey")
+		clientId := viper.GetString("clientId")
+		client := stacks.StackClient(apiKey, clientId)
 		serverName := cmd.Flag("server").Value.String()
 		stackName := cmd.Flag("stack").Value.String()
-		_, err := client.Stop(context.Background(), &stack.StopStartRequest{ServerName: serverName, Name: stackName})
+		job, err := client.Start(context.Background(), &stack.StopStartRequest{ServerName: serverName, Name: stackName})
 		if err != nil {
 			return err
 		}
 
-		return nil
+		return helper.WaitForAction(api.NewClient(apiKey, clientId), job.Return.JobID)
 	},
 }
 
