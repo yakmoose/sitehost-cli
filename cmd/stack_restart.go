@@ -1,5 +1,5 @@
 /*
-Copyright © 2023 NAME HERE <EMAIL ADDRESS>
+Copyright © 2023 John Lennard <john@yakmoo.se>
 */
 package cmd
 
@@ -10,7 +10,6 @@ import (
 	"github.com/sitehostnz/terraform-provider-sitehost/sitehost/helper"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"shcli/pkg/cloud/stacks"
 )
 
 // listCmd represents the list command
@@ -20,10 +19,11 @@ var restartStackCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		apiKey := viper.GetString("apiKey")
 		clientId := viper.GetString("clientId")
-		client := stacks.StackClient(apiKey, clientId)
+		client := stack.New(api.NewClient(apiKey, clientId))
+
 		serverName := cmd.Flag("server").Value.String()
 		stackName := cmd.Flag("stack").Value.String()
-		job, err := client.Restart(context.Background(), &stack.StopStartRequest{ServerName: serverName, Name: stackName})
+		job, err := client.Restart(context.Background(), stack.StopStartRequest{ServerName: serverName, Name: stackName})
 		if err != nil {
 			return err
 		}
@@ -34,6 +34,6 @@ var restartStackCmd = &cobra.Command{
 
 func init() {
 	stacksCmd.AddCommand(restartStackCmd)
-	restartStackCmd.Flags().StringP("stack", "s", "", "The server name to fetch the stack list from")
+	restartStackCmd.Flags().StringP("stack", "s", "", "The stack to restart")
 	restartStackCmd.MarkFlagRequired("stack")
 }

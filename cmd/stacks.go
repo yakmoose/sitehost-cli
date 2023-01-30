@@ -1,5 +1,5 @@
 /*
-Copyright © 2023 NAME HERE <EMAIL ADDRESS>
+Copyright © 2023 John Lennard <john@yakmoo.se>
 */
 package cmd
 
@@ -9,7 +9,7 @@ import (
 
 // stacksCmd represents the stacks command
 var stacksCmd = &cobra.Command{
-	Use:   "stacks",
+	Use:   "stack",
 	Short: "Manage cloud stacks",
 }
 

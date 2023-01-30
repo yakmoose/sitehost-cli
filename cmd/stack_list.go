@@ -1,16 +1,20 @@
 /*
-Copyright © 2023 NAME HERE <EMAIL ADDRESS>
+Copyright © 2023 John Lennard <john@yakmoo.se>
 */
 package cmd
 
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
+	"github.com/sitehostnz/gosh/pkg/api"
 	"github.com/sitehostnz/gosh/pkg/api/cloud/stack"
+
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"shcli/pkg/cloud/stacks"
+	"os"
+	"text/tabwriter"
 )
 
 // listCmd represents the list command
@@ -18,16 +22,35 @@ var listStacksCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List cloud stacks on a server",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		client := stacks.StackClient(viper.GetString("apiKey"), viper.GetString("clientId"))
+		client := stack.New(api.NewClient(viper.GetString("apiKey"), viper.GetString("clientId")))
+
 		serverName := cmd.Flag("server").Value.String()
-		stacks, err := client.List(context.Background(), &stack.ListRequest{ServerName: serverName})
+		stacks, err := client.List(context.Background(), stack.ListRequest{ServerName: serverName})
 		if err != nil {
 			return err
 		}
 
-		json, err := json.MarshalIndent(stacks, "", "  ")
+		format := cmd.Flag("format").Value.String()
 
-		fmt.Println(string(json))
+		if format == "json" {
+			json, err := json.MarshalIndent(stacks, "", "  ")
+			if err != nil {
+				return err
+			}
+			fmt.Println(string(json))
+		} else if format == "text" {
+			w := new(tabwriter.Writer)
+			w.Init(os.Stdout, 0, 4, 4, ' ', 0)
+			fmt.Fprintln(w, "Stack Name\tStack Label\tServer")
+			for _, stack := range *stacks {
+				fmt.Fprintf(w, "%s\t%s\t%s\n", stack.Name, stack.Label, stack.Server)
+			}
+
+			fmt.Fprintln(w)
+		} else {
+			/// how to error out.
+			return errors.New("unsupported format, please choose text or json")
+		}
 
 		return nil
 	},
