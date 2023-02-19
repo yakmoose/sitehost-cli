@@ -8,13 +8,11 @@ import (
 )
 
 // cloudCmd represents the cloud command
-var cloudCmd = &cobra.Command{
+var cloudCommand = &cobra.Command{
 	Use:   "cloud",
 	Short: "Commands for manipulating with Sitehost cloud/container stacks",
 }
 
 func init() {
-	rootCmd.AddCommand(cloudCmd)
-	cloudCmd.PersistentFlags().StringP("server", "S", "", "The server name to fetch the stack list from")
-	cloudCmd.MarkPersistentFlagRequired("server")
+	rootCmd.AddCommand(cloudCommand)
 }

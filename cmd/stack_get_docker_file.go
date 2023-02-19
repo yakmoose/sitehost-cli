@@ -5,7 +5,6 @@ package cmd
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"github.com/sitehostnz/gosh/pkg/api"
 	"github.com/sitehostnz/gosh/pkg/api/cloud/stack"
@@ -14,9 +13,9 @@ import (
 )
 
 // getCmd represents the get command
-var stackGetCmd = &cobra.Command{
-	Use:   "get",
-	Short: "Get the stack",
+var stackGetDockerFileCmd = &cobra.Command{
+	Use:   "docker_file",
+	Short: "Get the dockerfile",
 	RunE: func(cmd *cobra.Command, args []string) error {
 
 		client := stack.New(api.NewClient(viper.GetString("apiKey"), viper.GetString("clientId")))
@@ -29,22 +28,18 @@ var stackGetCmd = &cobra.Command{
 			return err
 		}
 
-		json, err := json.MarshalIndent(stack, "", "  ")
-		if err != nil {
-			return err
-		}
-		fmt.Println(string(json))
-
+		fmt.Println(stack.DockerFile)
+		
 		return nil
 	},
 }
 
 func init() {
-	stackCommand.AddCommand(stackGetCmd)
-	
-	stackGetCmd.Flags().StringP("server", "S", "", "The server name to fetch the stack list from")
-	stackGetCmd.MarkFlagRequired("server")
+	stackCommand.AddCommand(stackGetDockerFileCmd)
 
-	stackGetCmd.Flags().StringP("stack", "s", "", "The stack to get")
-	stackGetCmd.MarkFlagRequired("stack")
+	stackGetDockerFileCmd.Flags().StringP("server", "S", "", "The server name to fetch the stack list from")
+	stackGetDockerFileCmd.MarkFlagRequired("server")
+
+	stackGetDockerFileCmd.Flags().StringP("stack", "s", "", "The stack to get")
+	stackGetDockerFileCmd.MarkFlagRequired("stack")
 }

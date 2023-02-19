@@ -18,7 +18,6 @@ var serverGetCmd = &cobra.Command{
 	Use:   "get",
 	Short: "Get the specified server",
 	RunE: func(cmd *cobra.Command, args []string) error {
-
 		client := server.New(api.NewClient(viper.GetString("apiKey"), viper.GetString("clientId")))
 
 		serverName := cmd.Flag("server").Value.String()

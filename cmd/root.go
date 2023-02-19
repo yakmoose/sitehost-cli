@@ -10,7 +10,7 @@ import (
 	"os"
 )
 
-// RootCmd represents the base command when called without any subcommands
+// rootCmd represents the base command when called without any subcommands
 var (
 	cfgFile string
 	rootCmd = &cobra.Command{

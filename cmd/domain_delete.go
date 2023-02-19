@@ -7,8 +7,8 @@ import (
 	"context"
 	"github.com/sitehostnz/gosh/pkg/models"
 	"github.com/spf13/viper"
-	"shcli/pkg/domains"
 
+	"github.com/sitehostnz/gosh/pkg/api"
 	"github.com/sitehostnz/gosh/pkg/api/domain"
 	"github.com/spf13/cobra"
 )
@@ -19,7 +19,7 @@ var domainDelCmd = &cobra.Command{
 	Short: "remove a domain name",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		domainName := cmd.Flag("domain").Value.String()
-		client := domains.DomainClient(viper.GetString("apiKey"), viper.GetString("clientId"))
+		client := domain.New(api.NewClient(viper.GetString("apiKey"), viper.GetString("clientId")))
 		ctx := context.Background()
 		domain, err := client.Get(ctx, domain.GetRequest{DomainName: domainName})
 		if err != nil {

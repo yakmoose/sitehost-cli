@@ -33,7 +33,11 @@ var restartStackCmd = &cobra.Command{
 }
 
 func init() {
-	stacksCmd.AddCommand(restartStackCmd)
+	stackCommand.AddCommand(restartStackCmd)
+
+	restartStackCmd.Flags().StringP("server", "S", "", "The server name to fetch the stack list from")
+	restartStackCmd.MarkFlagRequired("server")
+
 	restartStackCmd.Flags().StringP("stack", "s", "", "The stack to restart")
 	restartStackCmd.MarkFlagRequired("stack")
 }

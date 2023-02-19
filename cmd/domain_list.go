@@ -8,10 +8,11 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/sitehostnz/gosh/pkg/api"
+	"github.com/sitehostnz/gosh/pkg/api/domain"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"os"
-	"shcli/pkg/domains"
 	"text/tabwriter"
 )
 
@@ -20,7 +21,7 @@ var listCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List all dns zones",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		client := domains.DomainClient(viper.GetString("apiKey"), viper.GetString("clientId"))
+		client := domain.New(api.NewClient(viper.GetString("apiKey"), viper.GetString("clientId")))
 		domains, err := client.List(context.Background())
 		if err != nil {
 			return err

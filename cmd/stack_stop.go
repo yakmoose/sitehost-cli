@@ -33,7 +33,11 @@ var stopStackCmd = &cobra.Command{
 }
 
 func init() {
-	stacksCmd.AddCommand(stopStackCmd)
+	stackCommand.AddCommand(stopStackCmd)
+
+	stopStackCmd.Flags().StringP("server", "S", "", "The server name to fetch the stack list from")
+	stopStackCmd.MarkFlagRequired("server")
+
 	stopStackCmd.Flags().StringP("stack", "s", "", "The stack to stop")
 	stopStackCmd.MarkFlagRequired("stack")
 }
