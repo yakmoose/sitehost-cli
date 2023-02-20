@@ -9,8 +9,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/sitehostnz/gosh/pkg/api"
-	"github.com/sitehostnz/gosh/pkg/api/cloud/stack"
-
+	"github.com/sitehostnz/gosh/pkg/api/server"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"os"
@@ -18,22 +17,20 @@ import (
 )
 
 // listCmd represents the list command
-var listStacksCmd = &cobra.Command{
+var listServersCmd = &cobra.Command{
 	Use:   "list",
-	Short: "List cloud stacks on a server",
+	Short: "List servers",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		client := stack.New(api.NewClient(viper.GetString("apiKey"), viper.GetString("clientId")))
+		client := server.New(api.NewClient(viper.GetString("apiKey"), viper.GetString("clientId")))
 
-		serverName := cmd.Flag("server").Value.String()
-		stacks, err := client.List(context.Background(), stack.ListRequest{ServerName: serverName})
+		servers, err := client.List(context.Background())
 		if err != nil {
 			return err
 		}
 
 		format := cmd.Flag("format").Value.String()
-
 		if format == "json" {
-			json, err := json.MarshalIndent(stacks, "", "  ")
+			json, err := json.MarshalIndent(servers, "", "  ")
 			if err != nil {
 				return err
 			}
@@ -41,9 +38,9 @@ var listStacksCmd = &cobra.Command{
 		} else if format == "text" {
 			w := new(tabwriter.Writer)
 			w.Init(os.Stdout, 0, 4, 4, ' ', 0)
-			fmt.Fprintln(w, "Stack Name\tStack Label\tServer")
-			for _, stack := range *stacks {
-				fmt.Fprintf(w, "%s\t%s\t%s\n", stack.Name, stack.Label, stack.Server)
+			fmt.Fprintln(w, "Server Name\tServer Label\tProduct Type\tServer Cores\tServer Ram\tServer Disk")
+			for _, server := range *servers {
+				fmt.Fprintf(w, "%s\t%s\t%s\t%d\t%s\t%s\n", server.Name, server.Label, server.ProductType, -1 /*server.Cores*/, server.RAM, " - " /* server.Disk */)
 			}
 
 			fmt.Fprintln(w)
@@ -57,8 +54,5 @@ var listStacksCmd = &cobra.Command{
 }
 
 func init() {
-	stackCommand.AddCommand(listStacksCmd)
-	listStacksCmd.Flags().StringP("server", "S", "", "The server name to fetch the stack list from")
-	listStacksCmd.MarkFlagRequired("server")
-
+	serverCmd.AddCommand(listServersCmd)
 }

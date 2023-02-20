@@ -1,5 +1,5 @@
 /*
-Copyright © 2022 NAME HERE <EMAIL ADDRESS>
+Copyright © 2022 John Lennard <john@yakmoo.se>
 */
 package cmd
 
@@ -10,7 +10,7 @@ import (
 	"os"
 )
 
-// RootCmd represents the base command when called without any subcommands
+// rootCmd represents the base command when called without any subcommands
 var (
 	cfgFile string
 	rootCmd = &cobra.Command{
@@ -71,13 +71,11 @@ func init() {
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.shcli.json)")
 	rootCmd.PersistentFlags().StringP("apiKey", "", "", "Sitehost api key")
 	rootCmd.PersistentFlags().StringP("clientId", "", "", "Sitehost client id")
+	rootCmd.PersistentFlags().StringP("format", "f", "text", "How do we want the output formatted")
 	rootCmd.MarkPersistentFlagRequired("apiKey")
 	rootCmd.MarkPersistentFlagRequired("clientId")
 
 	viper.BindPFlag("apiKey", rootCmd.PersistentFlags().Lookup("apiKey"))
 	viper.BindPFlag("clientId", rootCmd.PersistentFlags().Lookup("clientId"))
-
-	// Cobra also supports local flags, which will only run
-	// when this action is called directly.
-	// rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	viper.BindPFlag("format", rootCmd.PersistentFlags().Lookup("format"))
 }

@@ -9,8 +9,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/sitehostnz/gosh/pkg/api"
-	"github.com/sitehostnz/gosh/pkg/api/cloud/stack"
-
+	"github.com/sitehostnz/gosh/pkg/api/ssh/key"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"os"
@@ -18,14 +17,13 @@ import (
 )
 
 // listCmd represents the list command
-var listStacksCmd = &cobra.Command{
+var listKeysCmd = &cobra.Command{
 	Use:   "list",
-	Short: "List cloud stacks on a server",
+	Short: "List ssh keys",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		client := stack.New(api.NewClient(viper.GetString("apiKey"), viper.GetString("clientId")))
+		client := key.New(api.NewClient(viper.GetString("apiKey"), viper.GetString("clientId")))
 
-		serverName := cmd.Flag("server").Value.String()
-		stacks, err := client.List(context.Background(), stack.ListRequest{ServerName: serverName})
+		keys, err := client.List(context.Background())
 		if err != nil {
 			return err
 		}
@@ -33,7 +31,7 @@ var listStacksCmd = &cobra.Command{
 		format := cmd.Flag("format").Value.String()
 
 		if format == "json" {
-			json, err := json.MarshalIndent(stacks, "", "  ")
+			json, err := json.MarshalIndent(keys, "", "  ")
 			if err != nil {
 				return err
 			}
@@ -41,9 +39,9 @@ var listStacksCmd = &cobra.Command{
 		} else if format == "text" {
 			w := new(tabwriter.Writer)
 			w.Init(os.Stdout, 0, 4, 4, ' ', 0)
-			fmt.Fprintln(w, "Stack Name\tStack Label\tServer")
-			for _, stack := range *stacks {
-				fmt.Fprintf(w, "%s\t%s\t%s\n", stack.Name, stack.Label, stack.Server)
+			fmt.Fprintln(w, "Id\tLabel\tKey")
+			for _, key := range *keys {
+				fmt.Fprintf(w, "%s\t%s\t%s\n", key.ID, key.Label, key.Content)
 			}
 
 			fmt.Fprintln(w)
@@ -57,8 +55,5 @@ var listStacksCmd = &cobra.Command{
 }
 
 func init() {
-	stackCommand.AddCommand(listStacksCmd)
-	listStacksCmd.Flags().StringP("server", "S", "", "The server name to fetch the stack list from")
-	listStacksCmd.MarkFlagRequired("server")
-
+	sshKeysCmd.AddCommand(listKeysCmd)
 }

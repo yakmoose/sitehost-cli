@@ -8,11 +8,11 @@ import (
 )
 
 // cloudCmd represents the cloud command
-var cloudCommand = &cobra.Command{
-	Use:   "cloud",
-	Short: "Commands for manipulating with Sitehost cloud/container stacks",
+var serverCmd = &cobra.Command{
+	Use:   "server",
+	Short: "Commands for manipulating with Sitehost servers",
 }
 
 func init() {
-	rootCmd.AddCommand(cloudCommand)
+	rootCmd.AddCommand(serverCmd)
 }

@@ -1,5 +1,5 @@
 /*
-Copyright © 2023 NAME HERE <EMAIL ADDRESS>
+Copyright © 2023 John Lennard <john@yakmoo.se>
 */
 package cmd
 
@@ -9,8 +9,8 @@ import (
 
 // domainCmd represents the domain command
 var domainCmd = &cobra.Command{
-	Use:   "domains",
-	Short: "Create and delete domain names",
+	Use:   "dns",
+	Short: "Commands for managing dns zones",
 }
 
 func init() {
