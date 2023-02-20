@@ -8,13 +8,13 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/sitehostnz/gosh/pkg/api"
-	"github.com/sitehostnz/gosh/pkg/api/cloud/stack"
-
-	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 	"os"
 	"text/tabwriter"
+
+	"github.com/sitehostnz/gosh/pkg/api"
+	"github.com/sitehostnz/gosh/pkg/api/cloud/stack"
+	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 // listCmd represents the list command

@@ -7,6 +7,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+
 	"github.com/sitehostnz/gosh/pkg/api"
 	"github.com/sitehostnz/gosh/pkg/api/cloud/stack"
 	"github.com/spf13/cobra"
@@ -41,7 +42,7 @@ var stackGetCmd = &cobra.Command{
 
 func init() {
 	stackCommand.AddCommand(stackGetCmd)
-	
+
 	stackGetCmd.Flags().StringP("server", "S", "", "The server name to fetch the stack list from")
 	stackGetCmd.MarkFlagRequired("server")
 

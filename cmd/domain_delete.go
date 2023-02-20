@@ -5,11 +5,11 @@ package cmd
 
 import (
 	"context"
-	"github.com/spf13/viper"
 
 	"github.com/sitehostnz/gosh/pkg/api"
 	"github.com/sitehostnz/gosh/pkg/api/dns"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 // domainAddCmd represents the domainAdd command

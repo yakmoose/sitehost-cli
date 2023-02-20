@@ -4,10 +4,11 @@ Copyright © 2022 John Lennard <john@yakmoo.se>
 package cmd
 
 import (
+	"os"
+
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
-	"os"
 )
 
 // rootCmd represents the base command when called without any subcommands
