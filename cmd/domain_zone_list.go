@@ -14,7 +14,7 @@ import (
 	"text/tabwriter"
 )
 
-// listCmd represents the list command
+// listZonesCommand represents the list command
 var listZonesCommand = &cobra.Command{
 	Use:   "list",
 	Short: "List zones records",
