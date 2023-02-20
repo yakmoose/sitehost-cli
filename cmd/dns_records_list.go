@@ -5,13 +5,13 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"os"
+	"text/tabwriter"
+
 	"github.com/sitehostnz/gosh/pkg/api"
 	"github.com/sitehostnz/gosh/pkg/api/dns"
 	"github.com/spf13/cobra"
-
 	"github.com/spf13/viper"
-	"os"
-	"text/tabwriter"
 )
 
 // listCmd represents the list command

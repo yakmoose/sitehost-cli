@@ -8,12 +8,13 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"os"
+	"text/tabwriter"
+
 	"github.com/sitehostnz/gosh/pkg/api"
 	"github.com/sitehostnz/gosh/pkg/api/cloud/stack/environment"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"os"
-	"text/tabwriter"
 )
 
 // getCmd represents the get command

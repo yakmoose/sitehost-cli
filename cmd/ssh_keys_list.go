@@ -8,20 +8,21 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"os"
+	"text/tabwriter"
+
 	"github.com/sitehostnz/gosh/pkg/api"
 	"github.com/sitehostnz/gosh/pkg/api/ssh/key"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"os"
-	"text/tabwriter"
 )
 
-// listCmd represents the list command
+// listCmd represents the list command.
 var listKeysCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List ssh keys",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		client := key.New(api.NewClient(viper.GetString("apiKey"), viper.GetString("clientId")))
+		client := sshkey.New(api.NewClient(viper.GetString("apiKey"), viper.GetString("clientId")))
 
 		keys, err := client.List(context.Background())
 		if err != nil {

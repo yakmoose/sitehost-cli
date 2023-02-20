@@ -6,6 +6,7 @@ package cmd
 import (
 	"context"
 	"fmt"
+
 	"github.com/sitehostnz/gosh/pkg/api"
 	"github.com/sitehostnz/gosh/pkg/api/cloud/stack"
 	"github.com/spf13/cobra"
@@ -29,7 +30,7 @@ var stackGetDockerFileCmd = &cobra.Command{
 		}
 
 		fmt.Println(stack.DockerFile)
-		
+
 		return nil
 	},
 }

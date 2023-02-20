@@ -8,16 +8,17 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"os"
+	"regexp"
+	"strings"
+	"text/tabwriter"
+
 	"github.com/sitehostnz/gosh/pkg/api"
 	"github.com/sitehostnz/gosh/pkg/api/cloud/server"
 	"github.com/sitehostnz/gosh/pkg/api/cloud/stack"
 	"github.com/sitehostnz/gosh/pkg/models"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"os"
-	"regexp"
-	"strings"
-	"text/tabwriter"
 )
 
 func formatStackOutput(format string, stack models.Stack) error {
