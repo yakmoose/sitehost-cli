@@ -6,8 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/sitehostnz/gosh/pkg/api"
-	"github.com/sitehostnz/gosh/pkg/api/domain_record"
-
+	"github.com/sitehostnz/gosh/pkg/api/dns"
 	"github.com/spf13/cobra"
 
 	"github.com/spf13/viper"
@@ -20,9 +19,10 @@ var listRecordsCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List zones records",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		client := domain_record.New(api.NewClient(viper.GetString("apiKey"), viper.GetString("clientId")))
+		client := dns.New(api.NewClient(viper.GetString("apiKey"), viper.GetString("clientId")))
 		domainName := cmd.Flag("domain").Value.String()
-		domains, err := client.GetZone(context.Background(), domain_record.ZoneRequest{DomainName: domainName})
+
+		records, err := client.ListRecords(context.Background(), dns.ListRecordsRequest{Domain: domainName})
 		if err != nil {
 			return err
 		}
@@ -30,7 +30,7 @@ var listRecordsCmd = &cobra.Command{
 		format := cmd.Flag("format").Value.String()
 
 		if format == "json" {
-			json, err := json.MarshalIndent(domains, "", "  ")
+			json, err := json.MarshalIndent(records, "", "  ")
 			if err != nil {
 				return err
 			}
@@ -39,7 +39,7 @@ var listRecordsCmd = &cobra.Command{
 			w := new(tabwriter.Writer)
 			w.Init(os.Stdout, 0, 4, 4, ' ', 0)
 			fmt.Fprintln(w, "Id\tDomain\tName\tType\tValue\tPriority")
-			for _, record := range *domains {
+			for _, record := range records.Return {
 				fmt.Fprintf(w, "%s\t%s\t%s\t%s\t%s\t%s\n", record.ID, record.Domain, record.Name, record.Type, record.Content, record.Priority)
 			}
 

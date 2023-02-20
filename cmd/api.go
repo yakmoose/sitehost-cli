@@ -8,7 +8,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/sitehostnz/gosh/pkg/api"
-	"github.com/sitehostnz/gosh/pkg/api/api_info"
+	"github.com/sitehostnz/gosh/pkg/api/info"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -16,9 +16,9 @@ import (
 // apiCmd represents the api command
 var apiCmd = &cobra.Command{
 	Use:   "api",
-	Short: "Display sitehost API details",
+	Short: "Display sitehost API info",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		client := api_info.New(api.NewClient(viper.GetString("apiKey"), viper.GetString("clientId")))
+		client := info.New(api.NewClient(viper.GetString("apiKey"), viper.GetString("clientId")))
 		apiInfo, err := client.Get(context.Background())
 		json, err := json.MarshalIndent(apiInfo, "", "  ")
 		if err != nil {

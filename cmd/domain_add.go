@@ -9,8 +9,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/sitehostnz/gosh/pkg/api"
-	"github.com/sitehostnz/gosh/pkg/api/domain"
-	"github.com/sitehostnz/gosh/pkg/models"
+	"github.com/sitehostnz/gosh/pkg/api/dns"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -20,26 +19,26 @@ var domainAddCmd = &cobra.Command{
 	Use:   "add",
 	Short: "Add a new domain name",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		client := domain.New(api.NewClient(viper.GetString("apiKey"), viper.GetString("clientId")))
+		client := dns.New(api.NewClient(viper.GetString("apiKey"), viper.GetString("clientId")))
 		ctx := context.Background()
 
 		domainName := cmd.Flag("domain").Value.String()
 
-		domain, err := client.Get(ctx, domain.GetRequest{DomainName: domainName})
+		domainResponse, err := client.GetZone(ctx, dns.GetZoneRequest{DomainName: domainName})
 		if err != nil {
 			return err
 		}
 
-		if domain != nil {
+		if domainResponse.Return != nil {
 			return errors.New("Domain already exists")
 		}
 
-		domain, err = client.Create(ctx, &models.Domain{Name: domainName, TemplateID: "0"})
+		zoneCreateResponse, err := client.CreateZone(ctx, dns.CreateZoneRequest{DomainName: domainName})
 		if err != nil {
 			return err
 		}
 
-		json, err := json.MarshalIndent(domain, "", "  ")
+		json, err := json.MarshalIndent(zoneCreateResponse.Return, "", "  ")
 		fmt.Println(string(json))
 
 		return nil

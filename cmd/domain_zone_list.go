@@ -1,6 +1,3 @@
-/*
-Copyright © 2023 John Lennard <john@yakmoo.se>
-*/
 package cmd
 
 import (
@@ -9,20 +6,22 @@ import (
 	"errors"
 	"fmt"
 	"github.com/sitehostnz/gosh/pkg/api"
-	"github.com/sitehostnz/gosh/pkg/api/domain"
+	"github.com/sitehostnz/gosh/pkg/api/dns"
 	"github.com/spf13/cobra"
+
 	"github.com/spf13/viper"
 	"os"
 	"text/tabwriter"
 )
 
 // listCmd represents the list command
-var listCmd = &cobra.Command{
+var listZonesCommand = &cobra.Command{
 	Use:   "list",
-	Short: "List all dns zones",
+	Short: "List zones records",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		client := domain.New(api.NewClient(viper.GetString("apiKey"), viper.GetString("clientId")))
-		domains, err := client.List(context.Background())
+		client := dns.New(api.NewClient(viper.GetString("apiKey"), viper.GetString("clientId")))
+
+		zones, err := client.ListZones(context.Background(), &dns.ListZoneOptions{})
 		if err != nil {
 			return err
 		}
@@ -30,7 +29,7 @@ var listCmd = &cobra.Command{
 		format := cmd.Flag("format").Value.String()
 
 		if format == "json" {
-			json, err := json.MarshalIndent(domains, "", "  ")
+			json, err := json.MarshalIndent(zones, "", "  ")
 			if err != nil {
 				return err
 			}
@@ -38,9 +37,9 @@ var listCmd = &cobra.Command{
 		} else if format == "text" {
 			w := new(tabwriter.Writer)
 			w.Init(os.Stdout, 0, 4, 4, ' ', 0)
-			fmt.Fprintln(w, "Domain Name")
-			for _, domain := range *domains {
-				fmt.Fprintf(w, "%s\n", domain.Name)
+			fmt.Fprintln(w, "Domain")
+			for _, zone := range *zones {
+				fmt.Fprintln(w, zone.Name)
 			}
 
 			fmt.Fprintln(w)
@@ -53,5 +52,5 @@ var listCmd = &cobra.Command{
 }
 
 func init() {
-	domainCmd.AddCommand(listCmd)
+	domainCmd.AddCommand(listZonesCommand)
 }
