@@ -13,9 +13,9 @@ import (
 	"github.com/spf13/viper"
 )
 
-// getCmd represents the get command
+// stackGetDockerFileCmd represents the get command
 var stackGetDockerFileCmd = &cobra.Command{
-	Use:   "docker_file",
+	Use:   "dockerfile",
 	Short: "Get the dockerfile",
 	RunE: func(cmd *cobra.Command, args []string) error {
 

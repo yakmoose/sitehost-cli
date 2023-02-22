@@ -32,8 +32,6 @@ func formatStackOutput(format string, stack models.Stack) error {
 	} else if format == "text" {
 
 		pattern := "'VIRTUAL_HOST=(.*)'"
-		expr, _ := regexp.Compile(pattern)
-		m := expr.FindStringSubmatch(stack.DockerFile)
 
 		w := new(tabwriter.Writer)
 		w.Init(os.Stdout, 0, 4, 4, ' ', 1)
@@ -42,6 +40,8 @@ func formatStackOutput(format string, stack models.Stack) error {
 		fmt.Fprintf(w, "Name\t%s\n", stack.Name)
 		fmt.Fprintf(w, "Server Name\t%s\n", stack.Server)
 		fmt.Fprintf(w, "Server Label\t%s\n", stack.ServerLabel)
+		expr, _ := regexp.Compile(pattern)
+		m := expr.FindStringSubmatch(stack.DockerFile)
 		if len(m) == 2 {
 			fmt.Fprintf(w, "Aliases\t%s\n", strings.Join(strings.Split(m[1], ","), ", "))
 		}
