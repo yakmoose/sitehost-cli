@@ -21,7 +21,7 @@ var listZonesCommand = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client := dns.New(api.NewClient(viper.GetString("apiKey"), viper.GetString("clientId")))
 
-		zones, err := client.ListZones(context.Background(), &dns.ListZoneOptions{})
+		zoneResponse, err := client.ListZones(context.Background(), &dns.ListZoneOptions{})
 		if err != nil {
 			return err
 		}
@@ -29,7 +29,7 @@ var listZonesCommand = &cobra.Command{
 		format := cmd.Flag("format").Value.String()
 
 		if format == "json" {
-			json, err := json.MarshalIndent(zones, "", "  ")
+			json, err := json.MarshalIndent(zoneResponse.Return.Data, "", "  ")
 			if err != nil {
 				return err
 			}
@@ -38,7 +38,7 @@ var listZonesCommand = &cobra.Command{
 			w := new(tabwriter.Writer)
 			w.Init(os.Stdout, 0, 4, 4, ' ', 0)
 			fmt.Fprintln(w, "Domain")
-			for _, zone := range *zones {
+			for _, zone := range zoneResponse.Return.Data {
 				fmt.Fprintln(w, zone.Name)
 			}
 

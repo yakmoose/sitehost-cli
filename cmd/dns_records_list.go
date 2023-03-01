@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/sitehostnz/gosh/pkg/utils"
 	"os"
 	"text/tabwriter"
 
@@ -38,9 +39,9 @@ var listRecordsCmd = &cobra.Command{
 		} else if format == "text" {
 			w := new(tabwriter.Writer)
 			w.Init(os.Stdout, 0, 4, 4, ' ', 0)
-			fmt.Fprintln(w, "Id\tDomain\tName\tType\tValue\tPriority")
+			fmt.Fprintln(w, "Id\tDomain\tName\tType\tPriority\tValue")
 			for _, record := range records.Return {
-				fmt.Fprintf(w, "%s\t%s\t%s\t%s\t%s\t%s\n", record.ID, record.Domain, record.Name, record.Type, record.Content, record.Priority)
+				fmt.Fprintf(w, "%s\t%s\t%s\t%s\t%s\t%s\n", record.ID, record.Domain, utils.DeconstructFqdn(record.Name, record.Domain), record.Type, record.Priority, record.Content)
 			}
 
 			fmt.Fprintln(w)

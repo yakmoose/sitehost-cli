@@ -24,14 +24,14 @@ var listServersCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client := server.New(api.NewClient(viper.GetString("apiKey"), viper.GetString("clientId")))
 
-		servers, err := client.List(context.Background())
+		serversResponse, err := client.List(context.Background())
 		if err != nil {
 			return err
 		}
 
 		format := cmd.Flag("format").Value.String()
 		if format == "json" {
-			json, err := json.MarshalIndent(servers, "", "  ")
+			json, err := json.MarshalIndent(serversResponse.Return.Servers, "", "  ")
 			if err != nil {
 				return err
 			}
@@ -40,7 +40,7 @@ var listServersCmd = &cobra.Command{
 			w := new(tabwriter.Writer)
 			w.Init(os.Stdout, 0, 4, 4, ' ', 0)
 			fmt.Fprintln(w, "Server Name\tServer Label\tProduct Type\tServer Cores\tServer Ram\tServer Disk")
-			for _, server := range *servers {
+			for _, server := range serversResponse.Return.Servers {
 				fmt.Fprintf(w, "%s\t%s\t%s\t%d\t%s\t%s\n", server.Name, server.Label, server.ProductType, -1 /*server.Cores*/, server.RAM, " - " /* server.Disk */)
 			}
 

@@ -24,7 +24,7 @@ var restartStackCmd = &cobra.Command{
 
 		serverName := cmd.Flag("server").Value.String()
 		stackName := cmd.Flag("stack").Value.String()
-		job, err := client.Restart(context.Background(), stack.StopStartRequest{ServerName: serverName, Name: stackName})
+		job, err := client.Restart(context.Background(), stack.StopStartRestartRequest{ServerName: serverName, Name: stackName})
 		if err != nil {
 			return err
 		}

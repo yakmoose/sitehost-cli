@@ -30,10 +30,10 @@ var listStackVirtualHostsCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 
 		client := api.NewClient(viper.GetString("apiKey"), viper.GetString("clientId"))
-		stackServerClient := stackserver.New(client)
+		stackServerClient := server.New(client)
 		stackClient := stack.New(client)
 
-		stackServers, err := stackServerClient.List(context.Background())
+		stackServersResponse, err := stackServerClient.List(context.Background())
 		if err != nil {
 			return err
 		}
@@ -42,13 +42,13 @@ var listStackVirtualHostsCmd = &cobra.Command{
 		expr, _ := regexp.Compile(pattern)
 
 		vhosts := []VhostList{}
-		for _, ss := range *stackServers {
-			stacks, err := stackClient.List(context.Background(), stack.ListRequest{ServerName: ss.Name})
+		for _, ss := range stackServersResponse.CloudServers {
+			stacksResponse, err := stackClient.List(context.Background(), stack.ListRequest{ServerName: ss.Name})
 			if err != nil {
 				return err
 			}
 
-			for _, stack := range *stacks {
+			for _, stack := range stacksResponse.Return.Stacks {
 				m := expr.FindStringSubmatch(stack.DockerFile)
 				if len(m) == 2 {
 					for _, v := range strings.Split(m[1], ",") {

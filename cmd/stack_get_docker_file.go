@@ -24,12 +24,12 @@ var stackGetDockerFileCmd = &cobra.Command{
 		serverName := cmd.Flag("server").Value.String()
 		stackName := cmd.Flag("stack").Value.String()
 
-		stack, err := client.Get(context.Background(), stack.GetRequest{ServerName: serverName, Name: stackName})
+		stackResponse, err := client.Get(context.Background(), stack.GetRequest{ServerName: serverName, Name: stackName})
 		if err != nil {
 			return err
 		}
 
-		fmt.Println(stack.DockerFile)
+		fmt.Println(stackResponse.Stack.DockerFile)
 
 		return nil
 	},

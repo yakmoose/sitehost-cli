@@ -22,9 +22,9 @@ var listKeysCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List ssh keys",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		client := sshkey.New(api.NewClient(viper.GetString("apiKey"), viper.GetString("clientId")))
+		client := key.New(api.NewClient(viper.GetString("apiKey"), viper.GetString("clientId")))
 
-		keys, err := client.List(context.Background())
+		keysResponse, err := client.List(context.Background())
 		if err != nil {
 			return err
 		}
@@ -32,7 +32,7 @@ var listKeysCmd = &cobra.Command{
 		format := cmd.Flag("format").Value.String()
 
 		if format == "json" {
-			json, err := json.MarshalIndent(keys, "", "  ")
+			json, err := json.MarshalIndent(keysResponse.Return.SSHKeys, "", "  ")
 			if err != nil {
 				return err
 			}
@@ -41,7 +41,7 @@ var listKeysCmd = &cobra.Command{
 			w := new(tabwriter.Writer)
 			w.Init(os.Stdout, 0, 4, 4, ' ', 0)
 			fmt.Fprintln(w, "Id\tLabel\tKey")
-			for _, key := range *keys {
+			for _, key := range keysResponse.Return.SSHKeys {
 				fmt.Fprintf(w, "%s\t%s\t%s\n", key.ID, key.Label, key.Content)
 			}
 

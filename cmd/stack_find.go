@@ -62,10 +62,10 @@ var findStack = &cobra.Command{
 	Short: "Find a stack",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client := api.NewClient(viper.GetString("apiKey"), viper.GetString("clientId"))
-		stackServerClient := stackserver.New(client)
+		stackServerClient := server.New(client)
 		stackClient := stack.New(client)
 
-		stackServers, err := stackServerClient.List(context.Background())
+		stackServersResponse, err := stackServerClient.List(context.Background())
 		if err != nil {
 			return err
 		}
@@ -73,13 +73,13 @@ var findStack = &cobra.Command{
 		pattern := "'VIRTUAL_HOST=.*(" + regexp.QuoteMeta(args[0]) + ").*'"
 		expr, _ := regexp.Compile(pattern)
 
-		for _, ss := range *stackServers {
-			stacks, err := stackClient.List(context.Background(), stack.ListRequest{ServerName: ss.Name})
+		for _, ss := range stackServersResponse.CloudServers {
+			stackResponse, err := stackClient.List(context.Background(), stack.ListRequest{ServerName: ss.Name})
 			if err != nil {
 				return err
 			}
 
-			for _, s := range *stacks {
+			for _, s := range stackResponse.Return.Stacks {
 				// check the name,
 				if s.Name == args[0] || s.Label == args[0] {
 					return formatStackOutput(cmd.Flag("format").Value.String(), s)

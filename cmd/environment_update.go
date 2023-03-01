@@ -50,7 +50,7 @@ var environmentUpdateCmd = &cobra.Command{
 			return err
 		}
 
-		var settings *[]models.EnvironmentVariable
+		var settings []models.EnvironmentVariable
 		err = json.Unmarshal(data, &settings)
 		if err != nil {
 			return err
