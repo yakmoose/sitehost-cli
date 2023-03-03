@@ -41,7 +41,7 @@ var listServersCmd = &cobra.Command{
 			w.Init(os.Stdout, 0, 4, 4, ' ', 0)
 			fmt.Fprintln(w, "Server Name\tServer Label\tProduct Type\tServer Cores\tServer Ram\tServer Disk")
 			for _, server := range serversResponse.Return.Servers {
-				fmt.Fprintf(w, "%s\t%s\t%s\t%d\t%s\t%s\n", server.Name, server.Label, server.ProductType, -1 /*server.Cores*/, server.RAM, " - " /* server.Disk */)
+				fmt.Fprintf(w, "%s\t%s\t%s\t%d\t%s\t%d\n", server.Name, server.Label, server.ProductType, server.Cores, server.RAM, int64(server.Disk))
 			}
 
 			fmt.Fprintln(w)
