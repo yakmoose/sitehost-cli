@@ -1,0 +1,29 @@
+version: '2.1'
+services:
+  cc5720b0629350b1:
+    container_name: cc5720b0629350b1
+    environment:
+      - VIRTUAL_HOST=19.deploy.net.nz
+      - CERT_NAME=19.deploy.net.nz
+    expose:
+      - 80/tcp
+    image: registry.sitehost.co.nz/sitehost-php8-nginx:3.0.4-focal
+    labels:
+      - nz.sitehost.container.label=19.deploy.net.nz
+      - nz.sitehost.container.type=www
+      - nz.sitehost.container.monitored=True
+      - nz.sitehost.container.backup_disable=False
+      - nz.sitehost.container.website.vhosts=19.deploy.net.nz
+      - nz.sitehost.container.swap_config=False
+      - nz.sitehost.container.image_update=True
+      - nz.sitehost.container.dbs=[]
+    restart: unless-stopped
+    volumes:
+      - /data/docker0/www/cc5720b0629350b1/crontabs:/cron:ro
+      - /data/docker0/www/cc5720b0629350b1/application:/container/application:rw
+      - /data/docker0/www/cc5720b0629350b1/config:/container/config:ro
+      - /data/docker0/www/cc5720b0629350b1/logs:/container/logs:rw
+networks:
+  default:
+    external:
+      name: infra_default
