@@ -13,13 +13,13 @@ import (
 	"errors"
 
 	"github.com/sitehostnz/gosh/pkg/api"
-	"github.com/sitehostnz/gosh/pkg/api/cloud/stack/image"
+	"github.com/sitehostnz/gosh/pkg/api/cloud/image"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
-// stackImageListCmd represents the list command
-var stackImageListCmd = &cobra.Command{
+// listCmd represents the list command
+var cloudImageListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List images",
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -32,7 +32,7 @@ var stackImageListCmd = &cobra.Command{
 
 		format := cmd.Flag("format").Value.String()
 		if format == "json" {
-			json, err := json.MarshalIndent(imageResponse.Return, "", "  ")
+			json, err := json.MarshalIndent(imageResponse.Return.Images, "", "  ")
 			if err != nil {
 				return err
 			}
@@ -41,7 +41,7 @@ var stackImageListCmd = &cobra.Command{
 			w := new(tabwriter.Writer)
 			w.Init(os.Stdout, 0, 4, 4, ' ', 0)
 			fmt.Fprintln(w, "Image Id\tImage Label\tImage Code\tVersion Count\tContainer Count")
-			for _, image := range imageResponse.Return {
+			for _, image := range imageResponse.Return.Images {
 				fmt.Fprintf(w, "%s\t%s\t%s\t%d\t%d\n", image.ID, image.Label, image.Code, image.VersionCount, image.ContainerCount)
 			}
 
@@ -56,5 +56,5 @@ var stackImageListCmd = &cobra.Command{
 }
 
 func init() {
-	stackImageCmd.AddCommand(stackImageListCmd)
+	cloudImageCommand.AddCommand(cloudImageListCmd)
 }

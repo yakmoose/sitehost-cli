@@ -8,11 +8,11 @@ import (
 )
 
 // cloudImageCommand represents the stacks command
-var stackImageCmd = &cobra.Command{
+var cloudImageCommand = &cobra.Command{
 	Use:   "image",
-	Short: "Manage stack images",
+	Short: "Manage cloud images",
 }
 
 func init() {
-	stackCommand.AddCommand(stackImageCmd)
+	cloudCommand.AddCommand(cloudImageCommand)
 }

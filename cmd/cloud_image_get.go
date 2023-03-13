@@ -14,7 +14,7 @@ import (
 )
 
 // getCmd represents the get command
-var stackImageGetCommand = &cobra.Command{
+var cloudImageGetCommand = &cobra.Command{
 	Use:   "get",
 	Short: "Get the stack",
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -39,9 +39,9 @@ var stackImageGetCommand = &cobra.Command{
 }
 
 func init() {
-	stackImageCommand.AddCommand(stackImageGetCommand)
+	cloudImageCommand.AddCommand(cloudImageGetCommand)
 
-	stackImageGetCommand.Flags().StringP("code", "c", "", "The image code")
-	stackImageGetCommand.MarkFlagRequired("code")
+	cloudImageGetCommand.Flags().StringP("code", "c", "", "The image code")
+	cloudImageGetCommand.MarkFlagRequired("code")
 
 }
