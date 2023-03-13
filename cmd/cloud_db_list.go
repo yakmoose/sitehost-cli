@@ -18,7 +18,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-// listCmd represents the list command
+// cloudDbListCmd represents the list command
 var cloudDbListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List cloud databases",

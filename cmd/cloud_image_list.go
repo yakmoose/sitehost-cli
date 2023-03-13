@@ -18,7 +18,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-// listCmd represents the list command
+// cloudImageListCmd represents the list command
 var cloudImageListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List images",

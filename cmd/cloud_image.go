@@ -7,7 +7,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// cloudDbCmd represents the stacks command
+// cloudImageCommand represents the stacks command
 var cloudImageCommand = &cobra.Command{
 	Use:   "image",
 	Short: "Manage cloud images",

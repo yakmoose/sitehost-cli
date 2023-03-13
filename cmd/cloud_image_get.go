@@ -13,7 +13,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-// getCmd represents the get command
+// cloudImageGetCommand represents the get command
 var cloudImageGetCommand = &cobra.Command{
 	Use:   "get",
 	Short: "Get the stack",
