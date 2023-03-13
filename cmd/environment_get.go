@@ -34,13 +34,13 @@ var environmentGetCmd = &cobra.Command{
 			serviceName = stackName
 		}
 
-		environmentVariables, err := client.Get(context.Background(), environment.GetRequest{ServerName: serverName, Project: stackName, Service: serviceName})
+		environmentVariablesResponse, err := client.Get(context.Background(), environment.GetRequest{ServerName: serverName, Project: stackName, Service: serviceName})
 		if err != nil {
 			return err
 		}
 
 		if format == "json" {
-			json, err := json.MarshalIndent(environmentVariables, "", "  ")
+			json, err := json.MarshalIndent(environmentVariablesResponse.EnvironmentVariables, "", "  ")
 			if err != nil {
 				return err
 			}
@@ -49,7 +49,7 @@ var environmentGetCmd = &cobra.Command{
 			w := new(tabwriter.Writer)
 			w.Init(os.Stdout, 0, 4, 4, ' ', 0)
 			fmt.Fprintln(w, "Name\tValue")
-			for _, variable := range *environmentVariables {
+			for _, variable := range environmentVariablesResponse.EnvironmentVariables {
 				fmt.Fprintf(w, "%s\t%s\t\n", variable.Name, variable.Content)
 			}
 

@@ -25,7 +25,7 @@ var listStacksCmd = &cobra.Command{
 		client := stack.New(api.NewClient(viper.GetString("apiKey"), viper.GetString("clientId")))
 
 		serverName := cmd.Flag("server").Value.String()
-		stacks, err := client.List(context.Background(), stack.ListRequest{ServerName: serverName})
+		stacksResponse, err := client.List(context.Background(), stack.ListRequest{ServerName: serverName})
 		if err != nil {
 			return err
 		}
@@ -33,7 +33,7 @@ var listStacksCmd = &cobra.Command{
 		format := cmd.Flag("format").Value.String()
 
 		if format == "json" {
-			json, err := json.MarshalIndent(stacks, "", "  ")
+			json, err := json.MarshalIndent(stacksResponse.Return, "", "  ")
 			if err != nil {
 				return err
 			}
@@ -42,7 +42,7 @@ var listStacksCmd = &cobra.Command{
 			w := new(tabwriter.Writer)
 			w.Init(os.Stdout, 0, 4, 4, ' ', 0)
 			fmt.Fprintln(w, "Stack Name\tStack Label\tServer")
-			for _, stack := range *stacks {
+			for _, stack := range stacksResponse.Return.Stacks {
 				fmt.Fprintf(w, "%s\t%s\t%s\n", stack.Name, stack.Label, stack.Server)
 			}
 

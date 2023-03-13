@@ -7,7 +7,7 @@ import "github.com/spf13/cobra"
 
 // stackCommand represents the stacks command
 var sshKeysCmd = &cobra.Command{
-	Use:   "keys",
+	Use:   "key",
 	Short: "Manage ssh keys",
 }
 

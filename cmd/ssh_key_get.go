@@ -12,26 +12,30 @@ import (
 	"text/tabwriter"
 
 	"github.com/sitehostnz/gosh/pkg/api"
-	"github.com/sitehostnz/gosh/pkg/api/server"
+	"github.com/sitehostnz/gosh/pkg/api/ssh/key"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
-// listCmd represents the list command
-var listServersCmd = &cobra.Command{
-	Use:   "list",
-	Short: "List servers",
+// listCmd represents the list command.
+var getKeyCmd = &cobra.Command{
+	Use:   "get",
+	Short: "get the specified ssh key",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		client := server.New(api.NewClient(viper.GetString("apiKey"), viper.GetString("clientId")))
+		client := key.New(api.NewClient(viper.GetString("apiKey"), viper.GetString("clientId")))
 
-		serversResponse, err := client.List(context.Background())
+		keyID := cmd.Flag("keyid").Value.String()
+
+		keysResponse, err := client.Get(context.Background(), key.GetRequest{ID: keyID})
 		if err != nil {
 			return err
 		}
 
 		format := cmd.Flag("format").Value.String()
+
+		key := keysResponse.Return
 		if format == "json" {
-			json, err := json.MarshalIndent(serversResponse.Return.Servers, "", "  ")
+			json, err := json.MarshalIndent(key, "", "  ")
 			if err != nil {
 				return err
 			}
@@ -39,11 +43,8 @@ var listServersCmd = &cobra.Command{
 		} else if format == "text" {
 			w := new(tabwriter.Writer)
 			w.Init(os.Stdout, 0, 4, 4, ' ', 0)
-			fmt.Fprintln(w, "Server Name\tServer Label\tProduct Type\tServer Cores\tServer Ram\tServer Disk")
-			for _, server := range serversResponse.Return.Servers {
-				fmt.Fprintf(w, "%s\t%s\t%s\t%d\t%s\t%d\n", server.Name, server.Label, server.ProductType, server.Cores, server.RAM, int64(server.Disk))
-			}
-
+			fmt.Fprintln(w, "Id\tLabel\tKey")
+			fmt.Fprintf(w, "%s\t%s\t%s\n", key.ID, key.Label, key.Content)
 			fmt.Fprintln(w)
 		} else {
 			/// how to error out.
@@ -55,5 +56,8 @@ var listServersCmd = &cobra.Command{
 }
 
 func init() {
-	serverCmd.AddCommand(listServersCmd)
+	sshKeysCmd.AddCommand(getKeyCmd)
+
+	getKeyCmd.Flags().StringP("keyid", "", "", "The key id")
+	getKeyCmd.MarkFlagRequired("keyid")
 }

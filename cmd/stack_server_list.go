@@ -19,8 +19,8 @@ var listStackServers = &cobra.Command{
 	Use:   "list",
 	Short: "List cloud servers",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		client := stackserver.New(api.NewClient(viper.GetString("apiKey"), viper.GetString("clientId")))
-		servers, err := client.List(context.Background())
+		client := server.New(api.NewClient(viper.GetString("apiKey"), viper.GetString("clientId")))
+		serversResponse, err := client.List(context.Background())
 		if err != nil {
 			return err
 		}
@@ -28,7 +28,7 @@ var listStackServers = &cobra.Command{
 		format := cmd.Flag("format").Value.String()
 
 		if format == "json" {
-			json, err := json.MarshalIndent(servers, "", "  ")
+			json, err := json.MarshalIndent(serversResponse.CloudServers, "", "  ")
 			if err != nil {
 				return err
 			}
@@ -37,7 +37,7 @@ var listStackServers = &cobra.Command{
 			w := new(tabwriter.Writer)
 			w.Init(os.Stdout, 0, 4, 4, ' ', 0)
 			fmt.Fprintln(w, "Server Name\tServer Label")
-			for _, stackServer := range *servers {
+			for _, stackServer := range serversResponse.CloudServers {
 				fmt.Fprintf(w, "%s\t%s\n", stackServer.Name, stackServer.Label)
 			}
 

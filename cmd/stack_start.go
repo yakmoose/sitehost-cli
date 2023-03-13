@@ -5,6 +5,7 @@ package cmd
 
 import (
 	"context"
+	"github.com/sitehostnz/gosh/pkg/api/job"
 
 	"github.com/sitehostnz/gosh/pkg/api"
 	"github.com/sitehostnz/gosh/pkg/api/cloud/stack"
@@ -20,16 +21,18 @@ var startStackCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		apiKey := viper.GetString("apiKey")
 		clientId := viper.GetString("clientId")
-		client := stack.New(api.NewClient(apiKey, clientId))
+		api := api.NewClient(apiKey, clientId)
+		client := stack.New(api)
 
 		serverName := cmd.Flag("server").Value.String()
 		stackName := cmd.Flag("stack").Value.String()
-		job, err := client.Start(context.Background(), stack.StopStartRequest{ServerName: serverName, Name: stackName})
+		response, err := client.Start(context.Background(), stack.StopStartRestartRequest{ServerName: serverName, Name: stackName})
 		if err != nil {
 			return err
 		}
 
-		return helper.WaitForAction(api.NewClient(apiKey, clientId), job.Return.JobID)
+		return helper.WaitForAction(api, job.GetRequest{JobID: response.Return.JobID, Type: job.SchedulerType})
+
 	},
 }
 

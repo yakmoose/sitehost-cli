@@ -6,33 +6,33 @@ package cmd
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"os"
 	"text/tabwriter"
 
+	"errors"
+
 	"github.com/sitehostnz/gosh/pkg/api"
-	"github.com/sitehostnz/gosh/pkg/api/ssh/key"
+	"github.com/sitehostnz/gosh/pkg/api/cloud/stack/image"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
-// listCmd represents the list command.
-var listKeysCmd = &cobra.Command{
+// stackImageListCmd represents the list command
+var stackImageListCmd = &cobra.Command{
 	Use:   "list",
-	Short: "List ssh keys",
+	Short: "List images",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		client := sshkey.New(api.NewClient(viper.GetString("apiKey"), viper.GetString("clientId")))
+		client := image.New(api.NewClient(viper.GetString("apiKey"), viper.GetString("clientId")))
 
-		keys, err := client.List(context.Background())
+		imageResponse, err := client.List(context.Background())
 		if err != nil {
 			return err
 		}
 
 		format := cmd.Flag("format").Value.String()
-
 		if format == "json" {
-			json, err := json.MarshalIndent(keys, "", "  ")
+			json, err := json.MarshalIndent(imageResponse.Return, "", "  ")
 			if err != nil {
 				return err
 			}
@@ -40,9 +40,9 @@ var listKeysCmd = &cobra.Command{
 		} else if format == "text" {
 			w := new(tabwriter.Writer)
 			w.Init(os.Stdout, 0, 4, 4, ' ', 0)
-			fmt.Fprintln(w, "Id\tLabel\tKey")
-			for _, key := range *keys {
-				fmt.Fprintf(w, "%s\t%s\t%s\n", key.ID, key.Label, key.Content)
+			fmt.Fprintln(w, "Image Id\tImage Label\tImage Code\tVersion Count\tContainer Count")
+			for _, image := range imageResponse.Return {
+				fmt.Fprintf(w, "%s\t%s\t%s\t%d\t%d\n", image.ID, image.Label, image.Code, image.VersionCount, image.ContainerCount)
 			}
 
 			fmt.Fprintln(w)
@@ -56,5 +56,5 @@ var listKeysCmd = &cobra.Command{
 }
 
 func init() {
-	sshKeysCmd.AddCommand(listKeysCmd)
+	stackImageCmd.AddCommand(stackImageListCmd)
 }
