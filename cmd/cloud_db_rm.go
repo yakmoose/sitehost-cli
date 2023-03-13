@@ -7,6 +7,7 @@ import (
 	"context"
 	"github.com/sitehostnz/gosh/pkg/api"
 	"github.com/sitehostnz/gosh/pkg/api/cloud/db"
+	"github.com/sitehostnz/gosh/pkg/api/job"
 	"github.com/sitehostnz/terraform-provider-sitehost/sitehost/helper"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -19,19 +20,19 @@ var cloudDbDelete = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 
 		ctx := context.Background()
-		client := api.NewClient(viper.GetString("apiKey"), viper.GetString("clientId"))
-		dbClient := db.New(client)
+		api := api.NewClient(viper.GetString("apiKey"), viper.GetString("clientId"))
+		client := db.New(api)
 
 		database := cmd.Flag("db").Value.String()
 		serverName := cmd.Flag("server").Value.String()
 		host := cmd.Flag("host").Value.String()
 
-		dbDeleteResponse, err := dbClient.Delete(ctx, db.DeleteRequest{Database: database, MySQLHost: host, ServerName: serverName})
+		dbDeleteResponse, err := client.Delete(ctx, db.DeleteRequest{Database: database, MySQLHost: host, ServerName: serverName})
 		if err != nil {
 			return err
 		}
 
-		return helper.WaitForAction(client, dbDeleteResponse.Return.JobID)
+		return helper.WaitForAction(api, job.GetRequest{JobID: dbDeleteResponse.Return.JobID, Type: job.SchedulerType})
 	},
 }
 

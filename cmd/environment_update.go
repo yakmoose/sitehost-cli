@@ -11,6 +11,7 @@ import (
 
 	"github.com/sitehostnz/gosh/pkg/api"
 	"github.com/sitehostnz/gosh/pkg/api/cloud/stack/environment"
+	"github.com/sitehostnz/gosh/pkg/api/job"
 	"github.com/sitehostnz/gosh/pkg/models"
 	"github.com/sitehostnz/terraform-provider-sitehost/sitehost/helper"
 	"github.com/spf13/cobra"
@@ -56,7 +57,7 @@ var environmentUpdateCmd = &cobra.Command{
 			return err
 		}
 
-		job, err := client.Update(context.Background(), environment.UpdateRequest{
+		response, err := client.Update(context.Background(), environment.UpdateRequest{
 			ServerName:           serverName,
 			Project:              stackName,
 			Service:              serviceName,
@@ -67,7 +68,8 @@ var environmentUpdateCmd = &cobra.Command{
 			return err
 		}
 
-		return helper.WaitForAction(api, job.Return.JobID)
+		return helper.WaitForAction(api, job.GetRequest{JobID: response.Return.JobID, Type: job.SchedulerType})
+
 	},
 }
 

@@ -9,6 +9,7 @@ import (
 	"errors"
 	"github.com/sitehostnz/gosh/pkg/api"
 	"github.com/sitehostnz/gosh/pkg/api/cloud/stack"
+	"github.com/sitehostnz/gosh/pkg/api/job"
 	"github.com/sitehostnz/gosh/pkg/api/server"
 	"github.com/sitehostnz/gosh/pkg/models"
 	"github.com/sitehostnz/terraform-provider-sitehost/sitehost/helper"
@@ -63,9 +64,9 @@ var stackAddCmd = &cobra.Command{
 			environmentVariables = []models.EnvironmentVariable{}
 		}
 
-		client := api.NewClient(viper.GetString("apiKey"), viper.GetString("clientId"))
-		serverClient := server.New(client)
-		stackClient := stack.New(client)
+		api := api.NewClient(viper.GetString("apiKey"), viper.GetString("clientId"))
+		serverClient := server.New(api)
+		stackClient := stack.New(api)
 
 		// 1. is the server a stack server? best check
 		stackServer, err := serverClient.Get(context.Background(), server.GetRequest{ServerName: serverName})
@@ -77,7 +78,7 @@ var stackAddCmd = &cobra.Command{
 			return errors.New("server is not a cloud container server")
 		}
 
-		stackResponse, err := stackClient.Add(
+		response, err := stackClient.Add(
 			context.Background(),
 			stack.AddRequest{
 				ServerName: serverName,
@@ -99,7 +100,7 @@ var stackAddCmd = &cobra.Command{
 			return err
 		}
 
-		return helper.WaitForAction(client, stackResponse.Return.JobID)
+		return helper.WaitForAction(api, job.GetRequest{JobID: response.Return.JobID, Type: job.SchedulerType})
 
 	},
 }

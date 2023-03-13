@@ -7,6 +7,7 @@ import (
 	"context"
 	"errors"
 	"github.com/sitehostnz/gosh/pkg/api/cloud/db"
+	"github.com/sitehostnz/gosh/pkg/api/job"
 	"github.com/sitehostnz/gosh/pkg/api/server"
 	"github.com/sitehostnz/terraform-provider-sitehost/sitehost/helper"
 
@@ -22,9 +23,9 @@ var cloudDbAdd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 
 		ctx := context.Background()
-		client := api.NewClient(viper.GetString("apiKey"), viper.GetString("clientId"))
-		dbClient := db.New(client)
-		serverClient := server.New(client)
+		api := api.NewClient(viper.GetString("apiKey"), viper.GetString("clientId"))
+		dbClient := db.New(api)
+		serverClient := server.New(api)
 
 		database := cmd.Flag("db").Value.String()
 		serverName := cmd.Flag("server").Value.String()
@@ -46,7 +47,7 @@ var cloudDbAdd = &cobra.Command{
 			return err
 		}
 
-		return helper.WaitForAction(client, dbAddResponse.Return.JobID)
+		return helper.WaitForAction(api, job.GetRequest{JobID: dbAddResponse.Return.JobID, Type: job.SchedulerType})
 	},
 }
 
