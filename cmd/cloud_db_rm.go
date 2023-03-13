@@ -5,10 +5,9 @@ package cmd
 
 import (
 	"context"
-	"encoding/json"
-	"fmt"
 	"github.com/sitehostnz/gosh/pkg/api"
 	"github.com/sitehostnz/gosh/pkg/api/cloud/db"
+	"github.com/sitehostnz/terraform-provider-sitehost/sitehost/helper"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -26,20 +25,13 @@ var cloudDbDelete = &cobra.Command{
 		database := cmd.Flag("db").Value.String()
 		serverName := cmd.Flag("server").Value.String()
 		host := cmd.Flag("host").Value.String()
-		container := cmd.Flag("container").Value.String()
 
-		dbDeleteResponse, err := dbClient.Add(ctx, db.AddRequest{Database: database, MySQLHost: host, ServerName: serverName, Container: container})
+		dbDeleteResponse, err := dbClient.Delete(ctx, db.DeleteRequest{Database: database, MySQLHost: host, ServerName: serverName})
 		if err != nil {
 			return err
 		}
 
-		json, err := json.MarshalIndent(dbDeleteResponse, "", "  ")
-		if err != nil {
-			return err
-		}
-		fmt.Println(string(json))
-
-		return nil
+		return helper.WaitForAction(client, dbDeleteResponse.Return.JobID)
 	},
 }
 

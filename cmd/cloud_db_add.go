@@ -46,10 +46,6 @@ var cloudDbAdd = &cobra.Command{
 			return err
 		}
 
-		if err != nil {
-			return err
-		}
-
 		return helper.WaitForAction(client, dbAddResponse.Return.JobID)
 	},
 }
